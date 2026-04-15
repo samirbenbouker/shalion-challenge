@@ -47,19 +47,28 @@ Can modify this initial startup in /config/InitialDataSeeder.java
   - `School 3` with `120` capacity and `1` student
 
 ## Implemented Endpoints
-### Schools
-- `POST /schools`
-- `PUT /schools/{id}`
-- `DELETE /schools/{id}`
-- `GET /schools?name=&page=&size=&sort=`
-- `GET /schools/{id}`
+### School Endpoints
+| Method | Endpoint | Request Object | Response |
+|---|---|---|---|
+| `GET` | `/schools/{id}` | `None` | `200 OK` + `SchoolResponse` (includes students) |
+| `GET` | `/schools?name=&page=&size=&sort=` | `None` (query params only) | `200 OK` + `Page<SchoolResponse>` |
+| `POST` | `/schools` | `SchoolRequest` | `201 Created` + `SchoolResponse` |
+| `PUT` | `/schools/{id}` | `SchoolRequest` | `200 OK` + `SchoolResponse` |
+| `DELETE` | `/schools/{id}` | `None` | `204 No Content` |
 
-### Students
-- `POST /students`
-- `PUT /students/{id}`
-- `DELETE /students/{id}`
-- `GET /students/{id}`
-- `GET /schools/{schoolId}/students?name=&page=&size=&sort=`
+### School Endpoints
+| Method | Endpoint | Request Object | Response |
+|---|---|---|---|
+| `GET` | `/students/{id}` | `None` | `200 OK` + `StudentResponse` |
+| `POST` | `/students` | `StudentRequest` | `201 Created` + `StudentResponse` |
+| `PUT` | `/students/{id}` | `StudentRequest` | `200 OK` + `StudentResponse` |
+| `DELETE` | `/students/{id}` | `None` | `204 No Content` |
+
+### School & Student Endpoints
+| Method | Endpoint | Request Object | Response |
+|---|---|---|---|
+| `GET` | `/schools/{schoolId}/students?name=&page=&size=&sort=` | `None` (query params only) | `200 OK` + `Page<StudentResponse>` |
+
 
 ## Pagination and Sorting
 Collection endpoints are paginated.
@@ -100,6 +109,67 @@ HTTP status codes:
 - `400 Bad Request`: invalid input, malformed request, invalid query params
 - `404 Not Found`: school or student not found
 - `409 Conflict`: duplicated school name or school without available capacity
+
+## cURL Examples
+Use these commands directly against `http://localhost:8080`:
+
+#### Create school
+```bash
+curl -X POST "http://localhost:8080/schools" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"My School","maxCapacity":100}'
+```
+
+#### Update school
+```bash
+curl -X PUT "http://localhost:8080/schools/1" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"My School Updated","maxCapacity":120}'
+```
+
+#### Delete school
+```bash
+curl -X DELETE "http://localhost:8080/schools/1"
+```
+
+#### Search schools (name + pagination + sort)
+```bash
+curl -X GET "http://localhost:8080/schools?name=school&page=0&size=10&sort=name,asc"
+```
+
+#### School detail (includes students)
+```bash
+curl -X GET "http://localhost:8080/schools/1"
+```
+
+#### Create student
+```bash
+curl -X POST "http://localhost:8080/students" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Alice","schoolId":1}'
+```
+
+#### Update student
+```bash
+curl -X PUT "http://localhost:8080/students/1" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Alice Updated","schoolId":1}'
+```
+
+#### Delete student
+```bash
+curl -X DELETE "http://localhost:8080/students/1"
+```
+
+#### Student detail
+```bash
+curl -X GET "http://localhost:8080/students/1"
+```
+
+#### Search students in a school (name + pagination + sort)
+```bash
+curl -X GET "http://localhost:8080/schools/1/students?name=ali&page=0&size=10&sort=id,asc"
+```
 
 ## Build and Test
 ```bash
