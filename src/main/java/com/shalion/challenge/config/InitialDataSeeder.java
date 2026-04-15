@@ -7,6 +7,7 @@ import com.shalion.challenge.repository.StudentRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,28 +23,35 @@ public class InitialDataSeeder implements ApplicationRunner {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        School school1 = upsertSchool("School 1", 100);
-        School school2 = upsertSchool("School 2", 80);
-        School school3 = upsertSchool("School 3", 120);
+        //resetSeedData();
+
+        School school1 = createSchool("School 1", 100);
+        School school2 = createSchool("School 2", 80);
+        School school3 = createSchool("School 3", 120);
 
         reseedStudents(school1, school1.getMaxCapacity() / 2);
         reseedStudents(school2, school2.getMaxCapacity());
         reseedStudents(school3, 1);
     }
 
-    private School upsertSchool(String name, int maxCapacity) {
-        School school = schoolRepository.findByNameIgnoreCase(name).orElseGet(School::new);
+    private void resetSeedData() {
+        jdbcTemplate.execute("TRUNCATE TABLE students, schools RESTART IDENTITY CASCADE");
+    }
+
+    private School createSchool(String name, int maxCapacity) {
+        School school = new School();
         school.setName(name);
         school.setMaxCapacity(maxCapacity);
         return schoolRepository.save(school);
     }
 
     private void reseedStudents(School school, int targetCount) {
-        studentRepository.deleteBySchoolId(school.getId());
-
         List<Student> students = new ArrayList<>(targetCount);
         for (int i = 1; i <= targetCount; i++) {
             Student student = new Student();

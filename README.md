@@ -12,7 +12,7 @@ REST API built with Spring Boot and PostgreSQL to manage schools and students.
 
 ## Requirements
 - Java 21
-- Maven 3.9+
+- Gradle (or Gradle Wrapper)
 - PostgreSQL 13+
 
 ## Configuration
@@ -31,7 +31,7 @@ You can also use environment variables:
 
 ## Run Locally
 ```bash
-./mvnw spring-boot:run
+./gradlew bootRun
 ```
 
 ## API Documentation (Swagger)
@@ -95,8 +95,8 @@ HTTP status codes:
 
 ## Build and Test
 ```bash
-./mvnw clean package
-./mvnw test
+./gradlew clean build
+./gradlew test
 ```
 
 ## Docker
@@ -115,8 +115,7 @@ docker run --rm -p 8080:8080 \
 ```
 
 ## Notes
-- The project currently uses Maven (`pom.xml`).
-- If Gradle is required for submission, it can be migrated to `build.gradle` + Gradle Wrapper.
+- The project is configured with Gradle (`build.gradle`) and Gradle Wrapper (`gradlew`, `gradlew.bat`).
 - On every app startup, an idempotent seed script runs automatically:
   - `School 1` with `100` capacity and `50` students
   - `School 2` with `80` capacity and `80` students
