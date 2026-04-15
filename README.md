@@ -19,7 +19,7 @@ REST API built with Spring Boot and PostgreSQL to manage schools and students.
 Update `src/main/resources/application.properties` if needed:
 
 ```properties
-app.datasource.url=jdbc:postgresql://localhost:5433/postgres
+app.datasource.url=jdbc:postgresql://localhost:5432/postgres
 app.datasource.username=postgres
 app.datasource.password=
 ```
@@ -37,6 +37,14 @@ You can also use environment variables:
 ## API Documentation (Swagger)
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
+## Notes
+Can modify this initial startup in /config/InitialDataSeeder.java
+- The project is configured with Gradle (`build.gradle`) and Gradle Wrapper (`gradlew`, `gradlew.bat`).
+- On every app startup, an idempotent seed script runs automatically:
+  - `School 1` with `100` capacity and `50` students
+  - `School 2` with `80` capacity and `80` students
+  - `School 3` with `120` capacity and `1` student
 
 ## Implemented Endpoints
 ### Schools
@@ -113,10 +121,3 @@ docker run --rm -p 8080:8080 \
   -e APP_DATASOURCE_PASSWORD= \
   schools-api:latest
 ```
-
-## Notes
-- The project is configured with Gradle (`build.gradle`) and Gradle Wrapper (`gradlew`, `gradlew.bat`).
-- On every app startup, an idempotent seed script runs automatically:
-  - `School 1` with `100` capacity and `50` students
-  - `School 2` with `80` capacity and `80` students
-  - `School 3` with `120` capacity and `1` student
