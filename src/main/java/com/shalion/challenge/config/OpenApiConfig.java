@@ -10,14 +10,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
+    private static final String OPEN_API_TITLE = "Schools & Students API";
+    private static final String OPEN_API_DESCRIPTION = "REST API for managing schools and students";
+    private static final String OPEN_API_VERSION = "1.0.0";
+    private static final String OPEN_API_CONTACT = "Challenge API";
+    private static final String OPEN_API_LICENSE = "MIT";
+
     @Bean
     public OpenAPI challengeOpenApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Schools & Students API")
-                        .description("REST API for managing schools and students")
-                        .version("1.0.0")
-                        .contact(new Contact().name("Challenge API"))
-                        .license(new License().name("MIT")));
+                        .title(OPEN_API_TITLE)
+                        .description(OPEN_API_DESCRIPTION)
+                        .version(OPEN_API_VERSION)
+                        .contact(new Contact().name(OPEN_API_CONTACT))
+                        .license(new License().name(OPEN_API_LICENSE)));
     }
 }

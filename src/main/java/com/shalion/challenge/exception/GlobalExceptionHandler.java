@@ -2,6 +2,7 @@ package com.shalion.challenge.exception;
 
 import java.time.Instant;
 
+import com.shalion.challenge.util.AppMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .findFirst()
-                .orElse("Invalid request");
+                .orElse(AppMessages.ERROR_INVALID_REQUEST_MESSAGE);
 
         return buildError(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
     }
@@ -34,7 +35,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> handleMalformedJson(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        return buildError(HttpStatus.BAD_REQUEST, "Malformed request body", request.getRequestURI());
+        return buildError(HttpStatus.BAD_REQUEST, AppMessages.ERROR_MALFORMED_REQUEST_BODY_MESSAGE, request.getRequestURI());
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
-        return buildError(HttpStatus.CONFLICT, "Data integrity violation", request.getRequestURI());
+        return buildError(HttpStatus.CONFLICT, AppMessages.ERROR_DATA_INTEGRITY_VIOLATION_MESSAGE, request.getRequestURI());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -57,14 +58,9 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
-        return buildError(HttpStatus.BAD_REQUEST, "Invalid parameter format", request.getRequestURI());
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest request) {
-        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", request.getRequestURI());
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, AppMessages.ERROR_UNEXPECTED_ERROR_MESSAGE, request.getRequestURI());
     }
 
     private ResponseEntity<ApiError> buildError(HttpStatus status, String message, String path) {

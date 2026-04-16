@@ -11,8 +11,7 @@ import java.util.UUID;
 public interface EnlistmentService {
 
     EnlistmentAcceptedResponse startEnlistment(EnlistmentRequest request);
-
     EnlistmentStatusResponse getStatus(UUID processId);
-
     Page<EnlistmentStatusResponse> listProcesses(Pageable pageable);
+
 }

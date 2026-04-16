@@ -10,6 +10,7 @@ import com.shalion.challenge.mapper.StudentMapper;
 import com.shalion.challenge.repository.StudentRepository;
 import com.shalion.challenge.service.SchoolService;
 import com.shalion.challenge.service.StudentService;
+import com.shalion.challenge.util.AppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,8 +46,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public StudentResponse update(Long id, StudentRequest request) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Student not found with id " + id));
+        Student student = findEntityById(id);
 
         School targetSchool = schoolService.findEntityById(request.schoolId());
         boolean schoolChanged = !student.getSchool().getId().equals(targetSchool.getId());
@@ -65,16 +65,14 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public void delete(Long id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Student not found with id " + id));
+        Student student = findEntityById(id);
         studentRepository.delete(student);
     }
 
     @Override
     @Transactional(readOnly = true)
     public StudentResponse getById(Long id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Student not found with id " + id));
+        Student student = findEntityById(id);
         return studentMapper.toResponse(student);
     }
 
@@ -82,14 +80,19 @@ public class StudentServiceImpl implements StudentService {
     @Transactional(readOnly = true)
     public Page<StudentResponse> listBySchool(Long schoolId, String name, Pageable pageable) {
         schoolService.findEntityById(schoolId);
-        return studentRepository.findBySchoolIdAndNameContainingIgnoreCase(schoolId, name == null ? "" : name, pageable)
+        return studentRepository.findBySchoolIdAndNameContainingIgnoreCase(schoolId, name == null ? AppMessages.EMPTY_STRING : name, pageable)
                 .map(studentMapper::toResponse);
+    }
+
+    private Student findEntityById(Long id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(AppMessages.STUDENT_NOT_FOUND_WITH_ID_MESSAGE + id));
     }
 
     private void ensureCapacityAvailable(Long schoolId, Integer maxCapacity) {
         long currentCount = studentRepository.countBySchoolId(schoolId);
         if (currentCount >= maxCapacity) {
-            throw new ConflictException("School has no available capacity");
+            throw new ConflictException(AppMessages.SCHOOL_HAS_NO_AVAILABLE_CAPACITY_MESSAGE);
         }
     }
 }

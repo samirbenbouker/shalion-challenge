@@ -9,6 +9,7 @@ import com.shalion.challenge.exception.NotFoundException;
 import com.shalion.challenge.mapper.EnlistmentMapper;
 import com.shalion.challenge.repository.EnlistmentProcessRepository;
 import com.shalion.challenge.service.EnlistmentService;
+import com.shalion.challenge.util.AppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +41,7 @@ public class EnlistmentServiceImpl implements EnlistmentService {
         process.setStatus(EnlistmentStatus.PENDING);
         process.setFinished(false);
         process.setSuccess(null);
-        process.setMessage("Enlistment request accepted");
+        process.setMessage(AppMessages.ENLISTMENT_REQUEST_ACCEPTED_MESSAGE);
 
         EnlistmentProcess saved = enlistmentProcessRepository.save(process);
         triggerAsyncAfterCommit(saved.getId());
@@ -52,7 +53,7 @@ public class EnlistmentServiceImpl implements EnlistmentService {
     @Transactional(readOnly = true)
     public EnlistmentStatusResponse getStatus(UUID processId) {
         EnlistmentProcess process = enlistmentProcessRepository.findById(processId)
-                .orElseThrow(() -> new NotFoundException("Enlistment process not found with id " + processId));
+                .orElseThrow(() -> new NotFoundException(AppMessages.ENLISTMENT_PROCESS_NOT_FOUND_WITH_ID_MESSAGE + processId));
 
         return enlistmentMapper.toStatusResponse(process);
     }

@@ -7,6 +7,7 @@ import com.shalion.challenge.domain.EnlistmentStatus;
 import com.shalion.challenge.repository.EnlistmentProcessRepository;
 import com.shalion.challenge.repository.SchoolRepository;
 import com.shalion.challenge.repository.StudentRepository;
+import com.shalion.challenge.util.AppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ import java.util.UUID;
 
 @Service
 public class EnlistmentAsyncWorker {
+
+    private static final Integer START_RANDOM_DELAY = 2500;
+    private static final Integer END_RANDOM_DELAY = 10000;
 
     @Autowired
     private EnlistmentProcessRepository enlistmentProcessRepository;
@@ -43,13 +47,13 @@ public class EnlistmentAsyncWorker {
 
         Optional<Student> maybeStudent = studentRepository.findById(process.getStudentId());
         if (maybeStudent.isEmpty()) {
-            fail(process, "Student not found with id " + process.getStudentId());
+            fail(process, AppMessages.STUDENT_NOT_FOUND_WITH_ID_MESSAGE + process.getStudentId());
             return;
         }
 
         Optional<School> maybeSchool = schoolRepository.findById(process.getSchoolId());
         if (maybeSchool.isEmpty()) {
-            fail(process, "School not found with id " + process.getSchoolId());
+            fail(process, AppMessages.SCHOOL_NOT_FOUND_WITH_ID_MESSAGE + process.getSchoolId());
             return;
         }
 
@@ -57,24 +61,24 @@ public class EnlistmentAsyncWorker {
         School school = maybeSchool.get();
 
         if (student.getSchool() != null && school.getId().equals(student.getSchool().getId())) {
-            fail(process, "Student is already enlisted in this school");
+            fail(process, AppMessages.STUDENT_IS_ALREADY_ENLISTED_IN_THIS_SCHOOL_MESSAGE);
             return;
         }
 
         long currentCount = studentRepository.countBySchoolId(school.getId());
         if (currentCount >= school.getMaxCapacity()) {
-            fail(process, "School has no available capacity");
+            fail(process, AppMessages.SCHOOL_HAS_NO_AVAILABLE_CAPACITY_MESSAGE);
             return;
         }
 
         student.setSchool(school);
         studentRepository.save(student);
-        succeed(process, "Enlistment completed successfully");
+        succeed(process, AppMessages.ENLISTMENT_COMPLETED_SUCCESSFULLY_MESSAGE);
     }
 
     private void inProgress(EnlistmentProcess process) {
         process.setStatus(EnlistmentStatus.IN_PROGRESS);
-        process.setMessage("Enlistment in progress");
+        process.setMessage(AppMessages.ENLISTMENT_IN_PROGRESS_MESSAGE);
         enlistmentProcessRepository.save(process);
     }
 
@@ -97,7 +101,7 @@ public class EnlistmentAsyncWorker {
     }
 
     private void randomDelay() {
-        int millis = ThreadLocalRandom.current().nextInt(2500, 10000);
+        int millis = ThreadLocalRandom.current().nextInt(START_RANDOM_DELAY, END_RANDOM_DELAY);
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {

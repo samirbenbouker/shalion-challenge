@@ -8,6 +8,7 @@ import com.shalion.challenge.exception.NotFoundException;
 import com.shalion.challenge.mapper.SchoolMapper;
 import com.shalion.challenge.repository.SchoolRepository;
 import com.shalion.challenge.service.SchoolService;
+import com.shalion.challenge.util.AppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,7 @@ public class SchoolServiceImpl implements SchoolService {
     public SchoolResponse create(SchoolRequest request) {
         String normalizedName = request.name().trim();
         if (schoolRepository.existsByNameIgnoreCase(normalizedName)) {
-            throw new ConflictException("School name already exists");
+            throw new ConflictException(AppMessages.SCHOOL_NAME_ALREADY_EXISTS_MESSAGE);
         }
 
         School school = schoolMapper.toEntity(request);
@@ -45,10 +46,10 @@ public class SchoolServiceImpl implements SchoolService {
 
         String normalizedName = request.name().trim();
         if (schoolRepository.existsByNameIgnoreCaseAndIdNot(normalizedName, id)) {
-            throw new ConflictException("School name already exists");
+            throw new ConflictException(AppMessages.SCHOOL_NAME_ALREADY_EXISTS_MESSAGE);
         }
         if (request.maxCapacity() < school.getStudents().size()) {
-            throw new ConflictException("maxCapacity cannot be lower than current enrolled students");
+            throw new ConflictException(AppMessages.SCHOOL_MAX_CAPACITY_BE_LOWER_MESSAGE);
         }
 
         schoolMapper.updateEntityFromDto(request, school);
@@ -68,7 +69,7 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     @Transactional(readOnly = true)
     public Page<SchoolResponse> list(String name, Pageable pageable) {
-        return schoolRepository.findByNameContainingIgnoreCase(name == null ? "" : name, pageable)
+        return schoolRepository.findByNameContainingIgnoreCase(name == null ? AppMessages.EMPTY_STRING : name, pageable)
                 .map(schoolMapper::toResponse);
     }
 
@@ -83,6 +84,6 @@ public class SchoolServiceImpl implements SchoolService {
     @Transactional(readOnly = true)
     public School findEntityById(Long id) {
         return schoolRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("School not found with id " + id));
+                .orElseThrow(() -> new NotFoundException(AppMessages.SCHOOL_NOT_FOUND_WITH_ID_MESSAGE + id));
     }
 }
