@@ -56,7 +56,7 @@ Can modify this initial startup in /config/InitialDataSeeder.java
 | `PUT` | `/schools/{id}` | `SchoolRequest` | `200 OK` + `SchoolResponse` |
 | `DELETE` | `/schools/{id}` | `None` | `204 No Content` |
 
-### School Endpoints
+### Student Endpoints
 | Method | Endpoint | Request Object | Response |
 |---|---|---|---|
 | `GET` | `/students/{id}` | `None` | `200 OK` + `StudentResponse` |
@@ -68,6 +68,13 @@ Can modify this initial startup in /config/InitialDataSeeder.java
 | Method | Endpoint | Request Object | Response |
 |---|---|---|---|
 | `GET` | `/schools/{schoolId}/students?name=&page=&size=&sort=` | `None` (query params only) | `200 OK` + `Page<StudentResponse>` |
+
+### Asynchronous Enlistment Endpoints
+| Method | Endpoint | Request Object | Response |
+|---|---|---|---|
+| `POST` | `/enlistments` | `EnlistmentRequest` | `202 Accepted` + `EnlistmentAcceptedResponse` |
+| `GET` | `/enlistments/{processId}` | `None` | `200 OK` + `EnlistmentStatusResponse` |
+| `GET` | `/enlistments?page=&size=&sort=` | `None` (query params only) | `200 OK` + `Page<EnlistmentStatusResponse>` |
 
 
 ## Pagination and Sorting
@@ -169,6 +176,23 @@ curl -X GET "http://localhost:8080/students/1"
 #### Search students in a school (name + pagination + sort)
 ```bash
 curl -X GET "http://localhost:8080/schools/1/students?name=ali&page=0&size=10&sort=id,asc"
+```
+
+#### Start asynchronous enlistment
+```bash
+curl -X POST "http://localhost:8080/enlistments" \
+  -H "Content-Type: application/json" \
+  -d '{"studentId":1,"schoolId":2}'
+```
+
+#### Get enlistment process status/result
+```bash
+curl -X GET "http://localhost:8080/enlistments/{processId}"
+```
+
+#### List all enlistment processes (paginated)
+```bash
+curl -X GET "http://localhost:8080/enlistments?page=0&size=10&sort=createdAt,desc"
 ```
 
 ## Build and Test

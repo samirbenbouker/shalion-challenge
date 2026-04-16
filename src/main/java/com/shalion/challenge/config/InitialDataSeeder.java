@@ -29,8 +29,6 @@ public class InitialDataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        //resetSeedData();
-
         School school1 = createSchool("School 1", 100);
         School school2 = createSchool("School 2", 80);
         School school3 = createSchool("School 3", 120);
@@ -38,10 +36,6 @@ public class InitialDataSeeder implements ApplicationRunner {
         reseedStudents(school1, school1.getMaxCapacity() / 2);
         reseedStudents(school2, school2.getMaxCapacity());
         reseedStudents(school3, 1);
-    }
-
-    private void resetSeedData() {
-        jdbcTemplate.execute("TRUNCATE TABLE students, schools RESTART IDENTITY CASCADE");
     }
 
     private School createSchool(String name, int maxCapacity) {
