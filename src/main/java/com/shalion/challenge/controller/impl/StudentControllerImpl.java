@@ -25,6 +25,12 @@ public class StudentControllerImpl implements StudentController {
     @Autowired
     private StudentService studentService;
 
+    /**
+     * Creates a student resource.
+     *
+     * @param request student creation payload
+     * @return created student
+     */
     @Override
     @Operation(summary = "Create student")
     @PostMapping
@@ -33,6 +39,13 @@ public class StudentControllerImpl implements StudentController {
         return studentService.create(request);
     }
 
+    /**
+     * Updates an existing student resource.
+     *
+     * @param id student identifier
+     * @param request student update payload
+     * @return updated student
+     */
     @Override
     @Operation(summary = "Update student")
     @PutMapping("/{id}")
@@ -40,6 +53,11 @@ public class StudentControllerImpl implements StudentController {
         return studentService.update(id, request);
     }
 
+    /**
+     * Deletes an existing student resource.
+     *
+     * @param id student identifier
+     */
     @Override
     @Operation(summary = "Delete student")
     @DeleteMapping("/{id}")
@@ -48,6 +66,12 @@ public class StudentControllerImpl implements StudentController {
         studentService.delete(id);
     }
 
+    /**
+     * Returns student details by id.
+     *
+     * @param id student identifier
+     * @return student details
+     */
     @Override
     @Operation(summary = "Get student detail")
     @GetMapping("/{id}")

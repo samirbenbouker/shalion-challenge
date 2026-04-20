@@ -6,9 +6,21 @@ import org.springframework.data.domain.Sort;
 
 public final class PaginationUtils {
 
+    /**
+     * Utility class.
+     */
     private PaginationUtils() {
     }
 
+    /**
+     * Builds a {@link Pageable} from primitive pagination and sort parameters.
+     *
+     * @param page zero-based page index
+     * @param size page size
+     * @param sortExpression sort expression in the format {@code field,direction}
+     * @param defaultField default sort field used when the expression is empty
+     * @return pageable object with parsed sort direction
+     */
     public static Pageable toPageable(int page, int size, String sortExpression, String defaultField) {
         String sortValue = normalizeSort(sortExpression);
         String[] parts = sortValue.split(",");
@@ -23,6 +35,12 @@ public final class PaginationUtils {
         return PageRequest.of(page, size, Sort.by(direction, field));
     }
 
+    /**
+     * Sanitizes Swagger-style array sort values into a plain expression.
+     *
+     * @param rawSort incoming sort value
+     * @return normalized sort expression
+     */
     private static String normalizeSort(String rawSort) {
         if (rawSort == null || rawSort.trim().isEmpty()) {
             return "id,asc";

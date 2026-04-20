@@ -13,6 +13,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 public class DatabaseConfigImpl implements DatabaseConfig {
 
+    /**
+     * Builds the {@link DataSource} used by JPA and JDBC components.
+     *
+     * @param postgresProperties PostgreSQL connection properties
+     * @return configured Hikari data source
+     */
     @Override
     @Bean
     public DataSource dataSource(PostgresProperties postgresProperties) {
@@ -25,6 +31,12 @@ public class DatabaseConfigImpl implements DatabaseConfig {
                 .build();
     }
 
+    /**
+     * Provides a {@link JdbcTemplate} backed by the configured data source.
+     *
+     * @param dataSource application data source
+     * @return JDBC template bean
+     */
     @Override
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {

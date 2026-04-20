@@ -22,6 +22,16 @@ public class SchoolStudentControllerImpl implements SchoolStudentController {
     @Autowired
     private StudentService studentService;
 
+    /**
+     * Returns students for a school filtered by partial name and paginated.
+     *
+     * @param schoolId school identifier
+     * @param name partial student name
+     * @param page zero-based page index
+     * @param size page size
+     * @param sort sort expression
+     * @return paged students
+     */
     @Override
     @Operation(summary = "Search students by schoolId and name (case-insensitive) with pagination")
     @GetMapping("/{schoolId}/students")

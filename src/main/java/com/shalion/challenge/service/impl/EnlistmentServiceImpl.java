@@ -32,6 +32,12 @@ public class EnlistmentServiceImpl implements EnlistmentService {
     @Autowired
     private EnlistmentMapper enlistmentMapper;
 
+    /**
+     * Persists a new enlistment process in pending state and schedules async execution.
+     *
+     * @param request enlistment request payload
+     * @return accepted process response
+     */
     @Override
     @Transactional
     public EnlistmentAcceptedResponse startEnlistment(EnlistmentRequest request) {
@@ -49,6 +55,12 @@ public class EnlistmentServiceImpl implements EnlistmentService {
         return enlistmentMapper.toAcceptedResponse(saved);
     }
 
+    /**
+     * Retrieves one enlistment process status by id.
+     *
+     * @param processId process identifier
+     * @return process status response
+     */
     @Override
     @Transactional(readOnly = true)
     public EnlistmentStatusResponse getStatus(UUID processId) {
@@ -58,6 +70,12 @@ public class EnlistmentServiceImpl implements EnlistmentService {
         return enlistmentMapper.toStatusResponse(process);
     }
 
+    /**
+     * Returns all enlistment processes in a paged response.
+     *
+     * @param pageable pagination configuration
+     * @return paged process status responses
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<EnlistmentStatusResponse> listProcesses(Pageable pageable) {
@@ -65,6 +83,11 @@ public class EnlistmentServiceImpl implements EnlistmentService {
                 .map(enlistmentMapper::toStatusResponse);
     }
 
+    /**
+     * Triggers async processing after transaction commit when available.
+     *
+     * @param processId enlistment process id
+     */
     private void triggerAsyncAfterCommit(UUID processId) {
         // Synchronization Transactional its active in this thread
         // if it false we can't register a callbacks
@@ -77,6 +100,9 @@ public class EnlistmentServiceImpl implements EnlistmentService {
         // if service don't save we don't want to start enlistment
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
+            /**
+             * Starts async processing once the current transaction has been committed.
+             */
             public void afterCommit() {
                 enlistmentAsyncWorker.process(processId);
             }

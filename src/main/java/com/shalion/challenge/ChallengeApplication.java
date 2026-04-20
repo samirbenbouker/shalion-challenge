@@ -10,6 +10,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class ChallengeApplication {
 
+	/**
+	 * Bootstraps the Spring Boot application.
+	 *
+	 * @param args command-line arguments
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(ChallengeApplication.class, args);
 	}

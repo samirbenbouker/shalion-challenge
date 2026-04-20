@@ -24,6 +24,12 @@ public class SchoolServiceImpl implements SchoolService {
     @Autowired
     private SchoolMapper schoolMapper;
 
+    /**
+     * Creates a new school after validating unique name constraints.
+     *
+     * @param request school creation payload
+     * @return created school response
+     */
     @Override
     @Transactional
     public SchoolResponse create(SchoolRequest request) {
@@ -39,6 +45,13 @@ public class SchoolServiceImpl implements SchoolService {
         return schoolMapper.toResponse(saved);
     }
 
+    /**
+     * Updates an existing school after validating business rules.
+     *
+     * @param id school identifier
+     * @param request school update payload
+     * @return updated school response
+     */
     @Override
     @Transactional
     public SchoolResponse update(Long id, SchoolRequest request) {
@@ -59,6 +72,11 @@ public class SchoolServiceImpl implements SchoolService {
         return schoolMapper.toResponse(updated);
     }
 
+    /**
+     * Deletes a school by id.
+     *
+     * @param id school identifier
+     */
     @Override
     @Transactional
     public void delete(Long id) {
@@ -66,6 +84,13 @@ public class SchoolServiceImpl implements SchoolService {
         schoolRepository.delete(school);
     }
 
+    /**
+     * Returns paged schools filtered by case-insensitive partial name.
+     *
+     * @param name partial name filter
+     * @param pageable pagination configuration
+     * @return paged schools
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<SchoolResponse> list(String name, Pageable pageable) {
@@ -73,6 +98,12 @@ public class SchoolServiceImpl implements SchoolService {
                 .map(schoolMapper::toResponse);
     }
 
+    /**
+     * Returns one school with enrolled student details.
+     *
+     * @param id school identifier
+     * @return detailed school response
+     */
     @Override
     @Transactional(readOnly = true)
     public SchoolResponse getById(Long id) {
@@ -80,6 +111,12 @@ public class SchoolServiceImpl implements SchoolService {
         return schoolMapper.toDetailResponse(school);
     }
 
+    /**
+     * Resolves a school entity by id.
+     *
+     * @param id school identifier
+     * @return school entity
+     */
     @Override
     @Transactional(readOnly = true)
     public School findEntityById(Long id) {

@@ -29,6 +29,12 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentMapper studentMapper;
 
+    /**
+     * Creates a student after checking school existence and capacity.
+     *
+     * @param request student creation payload
+     * @return created student response
+     */
     @Override
     @Transactional
     public StudentResponse create(StudentRequest request) {
@@ -43,6 +49,13 @@ public class StudentServiceImpl implements StudentService {
         return studentMapper.toResponse(saved);
     }
 
+    /**
+     * Updates a student and validates capacity when changing schools.
+     *
+     * @param id student identifier
+     * @param request student update payload
+     * @return updated student response
+     */
     @Override
     @Transactional
     public StudentResponse update(Long id, StudentRequest request) {
@@ -62,6 +75,11 @@ public class StudentServiceImpl implements StudentService {
         return studentMapper.toResponse(updated);
     }
 
+    /**
+     * Deletes a student by id.
+     *
+     * @param id student identifier
+     */
     @Override
     @Transactional
     public void delete(Long id) {
@@ -69,6 +87,12 @@ public class StudentServiceImpl implements StudentService {
         studentRepository.delete(student);
     }
 
+    /**
+     * Returns student details by id.
+     *
+     * @param id student identifier
+     * @return student response
+     */
     @Override
     @Transactional(readOnly = true)
     public StudentResponse getById(Long id) {
@@ -76,6 +100,14 @@ public class StudentServiceImpl implements StudentService {
         return studentMapper.toResponse(student);
     }
 
+    /**
+     * Returns paged students filtered by school and partial name.
+     *
+     * @param schoolId school identifier
+     * @param name partial student name
+     * @param pageable pagination configuration
+     * @return paged student responses
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<StudentResponse> listBySchool(Long schoolId, String name, Pageable pageable) {
@@ -84,11 +116,23 @@ public class StudentServiceImpl implements StudentService {
                 .map(studentMapper::toResponse);
     }
 
+    /**
+     * Finds a student entity by id or throws a not-found error.
+     *
+     * @param id student identifier
+     * @return student entity
+     */
     private Student findEntityById(Long id) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(AppMessages.STUDENT_NOT_FOUND_WITH_ID_MESSAGE + id));
     }
 
+    /**
+     * Validates that a school still has capacity for a new student.
+     *
+     * @param schoolId school identifier
+     * @param maxCapacity configured maximum capacity
+     */
     private void ensureCapacityAvailable(Long schoolId, Integer maxCapacity) {
         long currentCount = studentRepository.countBySchoolId(schoolId);
         if (currentCount >= maxCapacity) {

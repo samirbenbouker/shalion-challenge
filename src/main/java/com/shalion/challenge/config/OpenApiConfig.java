@@ -16,6 +16,11 @@ public class OpenApiConfig {
     private static final String OPEN_API_CONTACT = "Challenge API";
     private static final String OPEN_API_LICENSE = "MIT";
 
+    /**
+     * Creates the OpenAPI definition shown in Swagger UI.
+     *
+     * @return OpenAPI metadata for the challenge API
+     */
     @Bean
     public OpenAPI challengeOpenApi() {
         return new OpenAPI()

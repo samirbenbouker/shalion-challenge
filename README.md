@@ -210,7 +210,7 @@ docker build -t schools-api:latest .
 Run container:
 ```bash
 docker run --rm -p 8080:8080 \
-  -e APP_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/postgres \
+  -e APP_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/postgres \
   -e APP_DATASOURCE_USERNAME=postgres \
   -e APP_DATASOURCE_PASSWORD= \
   schools-api:latest

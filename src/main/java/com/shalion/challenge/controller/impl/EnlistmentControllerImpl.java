@@ -31,6 +31,12 @@ public class EnlistmentControllerImpl implements EnlistmentController {
     @Autowired
     private EnlistmentService enlistmentService;
 
+    /**
+     * Starts an asynchronous enlistment process.
+     *
+     * @param request enlistment payload
+     * @return accepted process information
+     */
     @Override
     @Operation(summary = "Start asynchronous enlistment of a student into a school")
     @PostMapping
@@ -39,6 +45,12 @@ public class EnlistmentControllerImpl implements EnlistmentController {
         return enlistmentService.startEnlistment(request);
     }
 
+    /**
+     * Returns the current state of a specific enlistment process.
+     *
+     * @param processId enlistment process id
+     * @return process state
+     */
     @Override
     @Operation(summary = "Get enlistment process status and result")
     @GetMapping("/{processId}")
@@ -46,6 +58,14 @@ public class EnlistmentControllerImpl implements EnlistmentController {
         return enlistmentService.getStatus(processId);
     }
 
+    /**
+     * Returns paged enlistment process records.
+     *
+     * @param page zero-based page index
+     * @param size page size
+     * @param sort sort expression
+     * @return paged enlistment statuses
+     */
     @Override
     @Operation(summary = "List all enlistment processes with pagination")
     @GetMapping

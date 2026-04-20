@@ -30,6 +30,12 @@ public class SchoolControllerImpl implements SchoolController {
     @Autowired
     private SchoolService schoolService;
 
+    /**
+     * Creates a school resource.
+     *
+     * @param request school creation payload
+     * @return created school
+     */
     @Override
     @Operation(summary = "Create school")
     @PostMapping
@@ -38,6 +44,13 @@ public class SchoolControllerImpl implements SchoolController {
         return schoolService.create(request);
     }
 
+    /**
+     * Updates an existing school resource.
+     *
+     * @param id school identifier
+     * @param request school update payload
+     * @return updated school
+     */
     @Override
     @Operation(summary = "Update school")
     @PutMapping("/{id}")
@@ -45,6 +58,11 @@ public class SchoolControllerImpl implements SchoolController {
         return schoolService.update(id, request);
     }
 
+    /**
+     * Deletes an existing school resource.
+     *
+     * @param id school identifier
+     */
     @Override
     @Operation(summary = "Delete school")
     @DeleteMapping("/{id}")
@@ -53,6 +71,15 @@ public class SchoolControllerImpl implements SchoolController {
         schoolService.delete(id);
     }
 
+    /**
+     * Returns schools filtered by partial name and paginated.
+     *
+     * @param name partial school name
+     * @param page zero-based page index
+     * @param size page size
+     * @param sort sort expression
+     * @return paged schools
+     */
     @Override
     @Operation(summary = "Search schools by name (case-insensitive) with pagination")
     @GetMapping
@@ -67,6 +94,12 @@ public class SchoolControllerImpl implements SchoolController {
         return schoolService.list(name, pageable);
     }
 
+    /**
+     * Returns school detail including enrolled students.
+     *
+     * @param id school identifier
+     * @return school details
+     */
     @Override
     @Operation(summary = "Get school detail including students")
     @GetMapping("/{id}")

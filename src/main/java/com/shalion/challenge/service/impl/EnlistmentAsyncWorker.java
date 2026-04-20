@@ -33,6 +33,11 @@ public class EnlistmentAsyncWorker {
     @Autowired
     private SchoolRepository schoolRepository;
 
+    /**
+     * Executes the enlistment workflow asynchronously.
+     *
+     * @param processId process identifier
+     */
     @Async
     @Transactional
     public void process(UUID processId) {
@@ -76,12 +81,23 @@ public class EnlistmentAsyncWorker {
         succeed(process, AppMessages.ENLISTMENT_COMPLETED_SUCCESSFULLY_MESSAGE);
     }
 
+    /**
+     * Moves the process status to {@code IN_PROGRESS}.
+     *
+     * @param process process entity
+     */
     private void inProgress(EnlistmentProcess process) {
         process.setStatus(EnlistmentStatus.IN_PROGRESS);
         process.setMessage(AppMessages.ENLISTMENT_IN_PROGRESS_MESSAGE);
         enlistmentProcessRepository.save(process);
     }
 
+    /**
+     * Marks the process as finished and successful.
+     *
+     * @param process process entity
+     * @param message completion message
+     */
     private void succeed(EnlistmentProcess process, String message) {
         process.setStatus(EnlistmentStatus.SUCCESS);
         process.setFinished(true);
@@ -91,6 +107,12 @@ public class EnlistmentAsyncWorker {
         enlistmentProcessRepository.save(process);
     }
 
+    /**
+     * Marks the process as finished and failed.
+     *
+     * @param process process entity
+     * @param message failure reason
+     */
     private void fail(EnlistmentProcess process, String message) {
         process.setStatus(EnlistmentStatus.FAILED);
         process.setFinished(true);
@@ -100,6 +122,9 @@ public class EnlistmentAsyncWorker {
         enlistmentProcessRepository.save(process);
     }
 
+    /**
+     * Adds random delay to simulate a long-running business process.
+     */
     private void randomDelay() {
         int millis = ThreadLocalRandom.current().nextInt(START_RANDOM_DELAY, END_RANDOM_DELAY);
         try {

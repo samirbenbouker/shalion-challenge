@@ -26,6 +26,11 @@ public class InitialDataSeeder implements ApplicationRunner {
     @Autowired
     private StudentRepository studentRepository;
 
+    /**
+     * Seeds a deterministic initial dataset on application startup.
+     *
+     * @param args startup arguments
+     */
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
@@ -42,6 +47,13 @@ public class InitialDataSeeder implements ApplicationRunner {
         reseedStudents(school3, school3TargetCount);
     }
 
+    /**
+     * Creates a school with the provided name and maximum capacity.
+     *
+     * @param name school name
+     * @param maxCapacity school maximum capacity
+     * @return persisted school
+     */
     private School createSchool(String name, int maxCapacity) {
         School school = new School();
         school.setName(name);
@@ -49,6 +61,13 @@ public class InitialDataSeeder implements ApplicationRunner {
         return schoolRepository.save(school);
     }
 
+    /**
+     * Inserts a target amount of students for a school and renames them
+     * to match their generated identifiers.
+     *
+     * @param school target school
+     * @param targetCount amount of students to create
+     */
     private void reseedStudents(School school, int targetCount) {
         List<Student> students = new ArrayList<>(targetCount);
         for (int i = 1; i <= targetCount; i++) {

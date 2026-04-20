@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 public class PostgresProperties {
 
-    private String url = "jdbc:postgresql://localhost:5433/postgres";
+    private String url = "jdbc:postgresql://localhost:5432/postgres";
     private String username = "postgres";
     private String password = "";
     private String driverClassName = "org.postgresql.Driver";
